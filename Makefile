@@ -31,9 +31,9 @@ all: help
 
 help:
 	@echo "Please invoke one of the following targets:"
-	@echo "world-atlas    retrieve the topojson files for 50M and 110M scale."
-	@echo "nmfirs         generate the topojson file with NM FIRs for Eurocontrol Member States and FABs."
-	@echo "flags          download from Wikimedia all flags of the world (SVG format)"
+	@echo "	world-atlas    retrieve the topojson files for 50M and 110M scale."
+	@echo "	nmfirs         generate the topojson file with NM FIRs for Eurocontrol Member States and FABs."
+	@echo "	flags          download from Wikimedia all flags of the world (SVG format)"
 
 .SECONDARY:
 
@@ -41,7 +41,7 @@ info_%: shp/%/firs.shp
 	ogrinfo $< -sql "SELECT * FROM firs"
 
 .PHONY: nmfirs
-nmfirs: topo/FIRs_NM.json
+nmfirs: topo/euctrl-firs.json
 
 # GIS source (in zip) can be NM or EAD
 shp/euctrl/firs-unfiltered.shp: zip/FirUir_NM.zip
