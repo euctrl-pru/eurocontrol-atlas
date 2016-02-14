@@ -1,22 +1,26 @@
 {
-  "name": "eurocontrol-atlas",
-  "version": "0.0.1",
-  "description": "Roll Eurocontrol TopoJSON from Natural Earth.",
-  "keywords": [
-    "topojson",
-    "geojson",
-    "shapefile"
-  ],
-  "author": {
-    "name": "Enrico Spinielli",
-    "url": "http://enrico.spinielli.net/"
-  },
-  "repository": {
-    "type": "git",
-    "url": "http://github.com/euctrl-pru/eurocontrol-atlas.git"
-  },
-  "devDependencies": {
-      "shapefile": "0.1",
-      "topojson": ">=1.6.2 <2"
-  }
+    "name": "eurocontrol-atlas",
+    "version": "0.0.1",
+    "description": "Roll Eurocontrol TopoJSON from Natural Earth.",
+    "keywords": [
+        "topojson",
+        "geojson",
+        "shapefile"
+    ],
+    "author": {
+        "name": "Enrico Spinielli",
+        "url": "http://enrico.spinielli.net/"
+    },
+    "repository": {
+        "type": "git",
+        "url": "http://github.com/euctrl-pru/eurocontrol-atlas.git"
+    },
+    "dependencies": {
+        "topojson": ">=1.6.2 <2",
+        "mapshaper": "0.3.14",
+        "dbf2dsv": "0.1.0"
+    },
+    "devDependencies": {
+        "shapefile": "0.1"
+    }
 }
