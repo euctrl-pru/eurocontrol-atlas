@@ -296,19 +296,29 @@ topo/world-%.json:
 world-atlas: topo/world-50m.json topo/world-110m.json
 
 
-########## FLAGS ##########
+#################### EUROCONTROL ATLAS #####################
+# this is a subset of the world, i.e. the countries in Europe and
+# the neighboring ones needed to plot decent maps
 
 data/world-country-names.tsv:
 	mkdir -p $(dir $@)
 	curl -L https://gist.github.com/mbostock/4090846/raw/$(notdir $@) -o $@
 
-flags_ids: data/world-country-names.tsv
-	cat $< <(echo "900	Kosovo") | cut -f1 -s | tail -n+5 > $@
+data/country-ids: data/country-id-names.tsv
+	cut -d '	' -f1 -s $<  > $@
 
-flags_names: data/world-country-names.tsv
-	cat $< <(echo "900	Kosovo") | cut -f2 -s | tail -n+5 | cut -d',' -f1 | sed -e 's/[ ][ ]*/_/g' > $@
+data/country-id-name.csv: data/world-country-names.tsv
+	cat $< <(echo "900	Kosovo") | cut -f1,2 -s | tail -n+5 | cut -d',' -f1 | sed -e 's/	/,/'  > $@
 
-flags_urls: flags_names
+data/eu.csv: data/country-id-name.csv data/eu-members.csv
+	awk 'BEGIN {FS = ","; OFS = "," }; FNR==NR{a[$$1]=$$2;next} ($$1 in a) {print $$1,$$2,$$3,a[$$1]}' $? > $@
+
+
+########## FLAGS ##########
+data/flags-names: data/country-id-names.csv
+	cut -d ',' -f2 $< | sed -e 's/[ ][ ]*/_/g' > $@
+
+data/flags-urls: data/flags-names
 	rm -f $@
 	for c in $$(cat $<); \
 	do \
@@ -319,22 +329,30 @@ flags_urls: flags_names
 	done > $@
 
 .PHONY: flags_curls
-flags_curls: flags_urls
+flags_curls: data/flags-urls
 	for u in $$(cat $<); \
 	do \
 		echo -n $$u; curl -s -I "$$u" | grep -e '^HTTP'; \
 	done | grep "404 Not Found"
 
 
-data/world-country-flags.tsv: flags_ids flags_urls
+data/world-country-flags.tsv: data/country-ids data/flags-urls
 	mkdir -p $(dir $@)
 	paste -d '|' $^ | sed -e 's/|/	/g' > $@
 
-.PHONY: flags
-flags: flags_urls
-	mkdir -p $@
-	cd $@ && { xargs -n 1 curl -L -O < ../$< ; cd -; }
+flags/Flag_of_%.svg:
+	mkdir -p $(dir $@)
+	( \
+		h=$$(md5 -qs "$(notdir $@)" | cut -c1-2); \
+		f=$$(echo $$h | cut -c1); \
+		u="http://upload.wikimedia.org/wikipedia/commons/$$f/$$h/$(notdir $@)"; \
+		curl -L -o $@ $$u; \
+	)
 
+
+.PHONY: flags
+flags: data/flags-names
+	$(MAKE) $$(sed -e 's/^/flags\/Flag_of_/' -e 's/$$/.svg/' $<)
 
 
 
@@ -342,7 +360,9 @@ flags: flags_urls
 ################## helpers ######################
 .PHONY: clean-tmp clean
 clean-tmp:
-	rm -fR flags_ids flags_names flags_urls geo shp
+	rm -fR data/flags-ids data/flags-names data/flags-urls data/world-country-flags.tsv \
+					geo shp \
+					data/country-id-names.tsv data/eu-country-names.csv
 
 clean: clean-tmp
 	rm -fR flags/ topo/ geo/ shp/ data/world-country-flags.tsv data/world-country-names.tsv data/firs.tsv sed.script

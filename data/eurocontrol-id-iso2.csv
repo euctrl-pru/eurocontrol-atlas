@@ -1,0 +1,61 @@
+id,iso2
+8,AL
+51,AM
+40,AT
+56,BE
+70,BA
+100,BG
+191,HR
+196,CY
+203,CZ
+208,DK
+233,EE
+246,FI
+250,FR
+268,GE
+276,DE
+300,GR
+348,HU
+372,IE
+380,IT
+428,LV
+440,LT
+442,LU
+470,MT
+498,MD
+492,MC
+499,ME
+528,NL
+578,NO
+616,PL
+620,PT
+642,RO
+688,RS
+703,SK
+705,SI
+724,ES
+752,SE
+756,CH
+807,MK
+792,TR
+804,UA
+826,GB
+
+#   Albania (LA,AL,8), Armenia (UD,AM,51), Austria (LO,AT,40),
+#   Belgium (EB,BE,56), Bosnia and Herzegovina (LQ,BA,70), Bulgaria (LB,BG,100),
+#   Croatia (LD,HR,191), Cyprus (LC,CY,196), Czech Republic (LK,CZ,203),
+#   Denmark (EK,DK,208),
+#   Estonia (EE,EE,233),
+#   Finland (EF,FI,246), France (LF,FR,250),
+#   Georgia (UG,GE,268), Germany(ED/ET,DE,276), Greece (LG,GR,300),
+#   Hungary (LH,HU,348),
+#   Ireland (EI,IE,372), Italy (LI,IT,380),
+#   Latvia (EV,LV,428), Lithuania (EY,LT,440), Luxembourg (EL,LU,442),
+#   Malta (LM,MT,470), Moldova (LU,MD,498), Monaco (LN,MC,492), Montenegro (LY,ME,499),
+#   Netherlands (EH,NL,528), Norway (EN,NO,578),
+#   Poland (EP,PL,616), Portugal (LP,PT,620),
+#   Romania (LR,RO,642),
+#   Serbia (LY,RS,688), Slovakia (LZ,SK,703), Slovenia (LJ,SI,705),
+#   Spain (LE,ES,724), Sweden (ES,SE,752), Switzerland (LS,CH,756),
+#   The former Yugoslav Republic of Macedonia (LW,MK,807), Turkey (LT,TR,792),
+#   Ukraine (UK,UA,804) and United Kingdom of Great Britain and Northern Ireland (EG,GB,826).
