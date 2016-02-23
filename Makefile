@@ -178,6 +178,28 @@ topo/euctrl/euctrl.json: topo/euctrl/firs.json topo/euctrl/states.json topo/euct
 		--properties id,name,fab \
 		-- $^
 
+# TODO: merge at different FL.
+# ( maybe needed when converting from SHP to topojson:
+#		--no-pre-quantization \
+#		--post-quantization=1e5 \
+#		--simplify=1e-7 \
+# )
+# For example
+# 1. take [F|U]IR's for fab=FABEC
+# 2. find all relevant FL in the FLIGHT_MIN and FLIGHT_MAX
+#    Say you have slices like 0-195, 195-999
+# 3. Merge separatly the slices, merge IR's at FL=0 and at FL=195
+#    For one slice, you could:
+#       topojson-merge --io firs --oo states --key 'd.properties.icao' -- $< > $@
+#    "fabs": {"type": "GeometryCollection", "geometries":[
+#       {"type": "",
+#        "arcs": [],
+#        "id": "fabce"},
+#       {},
+#       ...
+#     ]}
+# 4. combine 3. in 1 topojson file
+
 
 
 ##################### SES ###########################
