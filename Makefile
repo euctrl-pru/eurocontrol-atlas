@@ -326,8 +326,8 @@ data/world-country-names.tsv:
 	mkdir -p $(dir $@)
 	curl -L https://gist.github.com/mbostock/4090846/raw/$(notdir $@) -o $@
 
-data/country-ids: data/country-id-names.tsv
-	cut -d '	' -f1 -s $<  > $@
+data/country-ids: data/country-id-name.csv
+	cut -d ',' -f1 -s $<  > $@
 
 data/country-id-name.csv: data/world-country-names.tsv
 	cat $< <(echo "900	Kosovo") | cut -f1,2 -s | tail -n+5 | cut -d',' -f1 | sed -e 's/	/,/'  > $@
@@ -337,7 +337,7 @@ data/eu.csv: data/country-id-name.csv data/eu-members.csv
 
 
 ########## FLAGS ##########
-data/flags-names: data/country-id-names.csv
+data/flags-names: data/country-id-name.csv
 	cut -d ',' -f2 $< | sed -e 's/[ ][ ]*/_/g' > $@
 
 data/flags-urls: data/flags-names
@@ -368,7 +368,7 @@ flags/Flag_of_%.svg:
 		h=$$(md5 -qs "$(notdir $@)" | cut -c1-2); \
 		f=$$(echo $$h | cut -c1); \
 		u="http://upload.wikimedia.org/wikipedia/commons/$$f/$$h/$(notdir $@)"; \
-		curl -L -o $@ $$u; \
+		curl -L -o "$@" $$u; \
 	)
 
 
@@ -382,12 +382,18 @@ flags: data/flags-names
 ################## helpers ######################
 .PHONY: clean-tmp clean
 clean-tmp:
-	rm -fR data/flags-ids data/flags-names data/flags-urls data/world-country-flags.tsv \
+	rm -fR \
 					geo shp \
-					data/country-id-names.tsv data/eu-country-names.csv
+					data/eu.csv \
+					data/firs.tsv \
+					topo/euctrl/fabs.json topo/euctrl/firs.json topo/euctrl/states.json \
+					topo/rp2/fabs.json topo/rp2/firs.json topo/rp2/states.json \
+					topo/ses/fabs.json topo/ses/firs.json topo/ses/states.json \
+					data/flags-urls data/world-country-flags.tsv \
+					data/country-id-name.csv data/country-ids data/flags-names
 
 clean: clean-tmp
-	rm -fR flags/ topo/ geo/ shp/ data/world-country-flags.tsv data/world-country-names.tsv data/firs.tsv sed.script
+	rm -fR flags/ topo/ shp/
 
 
 .PHONY: test
