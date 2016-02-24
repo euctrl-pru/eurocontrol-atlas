@@ -102,15 +102,15 @@ fabs_rp2 = $(call make-list,$(firs_rp2))
 all: help
 
 help:
-	@echo "Please invoke one of the following targets:"
-	@echo "	world-atlas    retrieve the topojson files for 50M and 110M scale."
-	@echo "	ses            generate the topojson files for SES (composition of FIRs only):"
-	@echo "                   topo/ses/ses.json contains firs, states and fabs."
-	@echo "	rp2            generate the topojson files for SES RP2 (composition of FIRs only):"
-	@echo "                   topo/rp2/rp2.json contains firs, states and fabs."
-	@echo "	euctrl         generate the topojson files for Eurocontrol States (composition of FIRs only):"
-	@echo "                   topo/euctrl/euctrl.json contains firs, states and fabs."
-	@echo "	flags          download from Wikimedia all flags of the world (SVG format)"
+	@echo "Please invoke one of the following targets (use MINFL=TRUE to consider only FIR's on FLIGHT_MIN):"
+	@echo " world-atlas   retrieve the topojson files for 50M and 110M scale."
+	@echo " ses           generate the topojson files for SES (composition of FIRs only):"
+	@echo "               topo/ses/ses.json contains firs, states and fabs."
+	@echo " rp2           generate the topojson files for SES RP2 (composition of FIRs only):"
+	@echo "               topo/rp2/rp2.json contains firs, states and fabs."
+	@echo " euctrl        generate the topojson files for Eurocontrol States (composition of FIRs only):"
+	@echo "               topo/euctrl/euctrl.json contains firs, states and fabs."
+	@echo " flags         download from Wikimedia all flags of the world (SVG format)"
 
 .SECONDARY:
 
@@ -146,8 +146,8 @@ shp/euctrl/firs.shp: shp/euctrl/firs-unfiltered.shp
 	rm -f $@
 	ogr2ogr -f 'ESRI Shapefile' \
 		-where "AV_ICAO_ST IN ($(ectrl_irs)) AND \
-						AV_AIRSPAC NOT IN ('EGGX', 'BODO') AND \
-						MIN_FLIGHT = 0" \
+						AV_AIRSPAC NOT IN ('EGGX', 'BODO') \
+						$(if $(MINFL), AND MIN_FLIGHT = 0)" \
 		$@ $<
 
 topo/euctrl/firs.json: shp/euctrl/firs.shp data/firfabstates.ses.csv
@@ -215,8 +215,8 @@ shp/ses/firs.shp: shp/euctrl/firs-unfiltered.shp
 	mkdir -p $(basename $@)
 	ogr2ogr -f 'ESRI Shapefile' \
 		-where "AV_ICAO_ST IN ($(fabs)) AND \
-						AV_AIRSPAC NOT IN ('EGGX', 'BODO') AND \
-						MIN_FLIGHT = 0" \
+						AV_AIRSPAC NOT IN ('EGGX', 'BODO') \
+						$(if $(MINFL), AND MIN_FLIGHT = 0)" \
 		$@ $<
 
 # properties in shapefile
@@ -274,8 +274,8 @@ shp/rp2/firs.shp: shp/ses/firs.shp
 	rm -f $@
 	mkdir -p $(basename $@)
 	ogr2ogr -f 'ESRI Shapefile' \
-		-where "AV_AIRSPAC in ($(fabs_rp2)) AND \
-						MIN_FLIGHT = 0" \
+		-where "AV_AIRSPAC in ($(fabs_rp2)) \
+						$(if $(MINFL), AND MIN_FLIGHT = 0)" \
 		$@ $<
 
 topo/rp2/firs.json: shp/rp2/firs.shp
