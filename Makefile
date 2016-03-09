@@ -99,7 +99,7 @@ fabs_rp2 = $(call make-list,$(firs_rp2))
 
 
 .PHONY: all help
-all: help
+all: euctrl ses rp2 world-atlas flags
 
 help:
 	@echo "Please invoke one of the following targets (use MINFL=TRUE to consider only FIR's on FLIGHT_MIN):"
