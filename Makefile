@@ -5,7 +5,10 @@ TOPOMERGE = node_modules/.bin/topojson-merge
 # http://www.naturalearthdata.com/downloads/
 NATURAL_EARTH_CDN = http://naciscdn.org/naturalearth
 GISCO_CDN = http://ec.europa.eu/eurostat/cache/GISCO/geodatafiles
+CLIP_BBOX= -42.0  12.0 52.0 84.0
 
+CSVS = data/firs.tsv data/world-country-names.tsv data/country-id-name.csv \
+	data/firfabstates.ses.csv data/eu.csv data/world-country-flags.tsv
 
 join-with = $(subst $(space),$1,$2)
 comma := ,
@@ -17,7 +20,7 @@ make-list = $(call join-with,$(comma),$(patsubst %,'%',$1))
 
 # Countries of interest
 #
-# Eurocontrol Member States (in parenthesis ICAO code, ISO 2 letter code, ISO #):
+# Eurocontrol Member States (in parenthesis ICAO code, ISO 2 letter code, ISO #) [Added Israele and Morocco]:
 #   Albania (LA,AL,8), Armenia (UD,AM,51), Austria (LO,AT,40),
 #   Belgium (EB,BE,56), Bosnia and Herzegovina (LQ,BA,70), Bulgaria (LB,BG,100),
 #   Croatia (LD,HR,191), Cyprus (LC,CY,196), Czech Republic (LK,CZ,203),
@@ -26,20 +29,20 @@ make-list = $(call join-with,$(comma),$(patsubst %,'%',$1))
 #   Finland (EF,FI,246), France (LF,FR,250),
 #   Georgia (UG,GE,268), Germany(ED/ET,DE,276), Greece (LG,GR,300),
 #   Hungary (LH,HU,348),
-#   Ireland (EI,IE,372), Italy (LI,IT,380),
+#   Ireland (EI,IE,372), Israel (LL,IL,,376), Italy (LI,IT,380),
 #   Latvia (EV,LV,428), Lithuania (EY,LT,440), Luxembourg (EL,LU,442),
-#   Malta (LM,MT,470), Moldova (LU,MD,498), Monaco (LN,MC,492), Montenegro (LY,ME,499),
+#   Malta (LM,MT,470), Moldova (LU,MD,498), Monaco (LN,MC,492), Montenegro (LY,ME,499), Morocco (GM,MA,504)
 #   Netherlands (EH,NL,528), Norway (EN,NO,578),
 #   Poland (EP,PL,616), Portugal (LP,PT,620),
 #   Romania (LR,RO,642),
 #   Serbia (LY,RS,688), Slovakia (LZ,SK,703), Slovenia (LJ,SI,705),
 #   Spain (LE,ES,724), Sweden (ES,SE,752), Switzerland (LS,CH,756),
 #   The former Yugoslav Republic of Macedonia (LW,MK,807), Turkey (LT,TR,792),
-#   Ukraine (UK,UA,804) and United Kingdom of Great Britain and Northern Ireland (EG,GB,826).
+#   Ukraine (UK,UA,804), United Kingdom of Great Britain and Northern Ireland (EG,GB,826).
 #
 
-ectrl_ms = LA UD LO EB LQ LB LD LC LK EK EE EF LF UG ED ET LG LH EI LI EV EY \
-						EL LM LU LN LY EH EN EP LP LR LY LZ LJ LE ES LS LW LT UK EG
+ectrl_ms = LA UD LO EB LQ LB LD LC LK EK EE EF LF UG ED ET LG LH EI LL LI EV EY \
+						EL LM LU LN LY GM EH EN EP LP LR LY LZ LJ LE ES LS LW LT UK EG
 ectrl_irs = $(call make-list,$(ectrl_ms))
 
 #
@@ -110,23 +113,29 @@ help:
 	@echo "               topo/rp2/rp2.json contains firs, states and fabs."
 	@echo " euctrl        generate the topojson files for Eurocontrol States (composition of FIRs only):"
 	@echo "               topo/euctrl/euctrl.json contains firs, states and fabs."
+	@echo "               topo/euctrl/eurocontrol_area_110m.json contains all European countries and neighbouring ones."
 	@echo " flags         download from Wikimedia all flags of the world (SVG format)"
+	@echo " csvs          generate all support CSV files (FAB id-names, country id-name, EU members/candidates, EUROCONTROL members)"
 
 .SECONDARY:
 
 info_%: shp/%/firs.shp
 	ogrinfo $< -sql "SELECT * FROM firs"
 
-.PHONY: euctrl ses rp2
+.PHONY: euctrl ses rp2 csvs
 ses: topo/ses/ses.json
 
 rp2: topo/rp2/rp2.json
 
-euctrl: topo/euctrl/euctrl.json
+euctrl: topo/euctrl/euctrl.json \
+	topo/euctrl/eurocontrol_area_10m.json topo/euctrl/eurocontrol_area_50m.json \
+	topo/euctrl/eurocontrol_area_110m.json
 
+csvs: $(CSVS)
 
 # GIS source (in zip) can be NM or EAD
-shp/euctrl/firs-unfiltered.shp: zip/FirUir_NM.zip
+shp/euctrl/firs_unfiltered.shp: zip/FirUir_NM.zip
+
 
 shp/euctrl/%.shp:
 	rm -rf $(basename $@)
@@ -142,7 +151,7 @@ shp/euctrl/%.shp:
 # NOTE: filter out the FIR w/ id
 #          * EGGX (fake one to shape the REROUTING AREA)
 #          * BODO a piece of volume contested btween Norway and Russia
-shp/euctrl/firs.shp: shp/euctrl/firs-unfiltered.shp
+shp/euctrl/firs.shp: shp/euctrl/firs_unfiltered.shp
 	rm -f $@
 	ogr2ogr -f 'ESRI Shapefile' \
 		-where "AV_ICAO_ST IN ($(ectrl_irs)) AND \
@@ -210,7 +219,7 @@ topo/euctrl/euctrl.json: topo/euctrl/firs.json topo/euctrl/states.json topo/euct
 #          * EGGX (fake one to shape the REROUTING AREA)
 #          * BODO a piece of volume contested btween Norway and Russia
 # NOTE: we take only FIRs, i.e. IRs with MIN_FLIGHT level == 0
-shp/ses/firs.shp: shp/euctrl/firs-unfiltered.shp
+shp/ses/firs.shp: shp/euctrl/firs_unfiltered.shp
 	rm -f $@
 	mkdir -p $(basename $@)
 	ogr2ogr -f 'ESRI Shapefile' \
@@ -220,13 +229,13 @@ shp/ses/firs.shp: shp/euctrl/firs-unfiltered.shp
 		$@ $<
 
 # properties in shapefile
-data/firs.tsv: shp/ses/firs.dbf
-	node_modules/.bin/dbf2dsv $< | tail -n +2 > $@
+data/firs.tsv: shp/ses/firs.shp
+	node_modules/.bin/dbf2dsv shp/ses/firs.dbf | tail -n +2 > $@
 
 # mapping FIR <--> FAB
 data/firfabstates.ses.csv: data/firs.tsv
 	tail -n +2 data/fabstates.ses.csv |sed 's/\([^,]*\),\([^,]*\)/s%\1%\2%/' > sed.script
-	cut -d '	' -f 3 $< | sed -f sed.script > /tmp/f2
+	cut -d '	' -f 3 $< | gsed -f sed.script > /tmp/f2
 	cut -d '	' -f 2 $< > /tmp/f1
 	gsed -i '1i AV_AIRSPAC' /tmp/f1
 	gsed -i '1i fab' /tmp/f2
@@ -377,6 +386,67 @@ flags: data/flags-names
 	$(MAKE) $$(sed -e 's/^/flags\/Flag_of_/' -e 's/$$/.svg/' $<)
 
 
+################## Europe ##################
+zip/ne_10m_%.zip:
+	mkdir -p $(dir $@)
+	curl "$(NATURAL_EARTH_CDN)/10m/cultural/ne_10m_$*.zip" -o $@.download
+	mv $@.download $@
+
+zip/ne_50m_%.zip:
+	mkdir -p $(dir $@)
+	curl "$(NATURAL_EARTH_CDN)/50m/cultural/ne_50m_$*.zip" -o $@.download
+	mv $@.download $@
+zip/ne_110m_%.zip:
+	mkdir -p $(dir $@)
+	curl "$(NATURAL_EARTH_CDN)/110m/cultural/ne_110m_$*.zip" -o $@.download
+	mv $@.download $@
+
+# Admin 0 – countries (5.08M): 10m, 50m, 110m
+shp/ne_%_admin_0_countries.shp: zip/ne_%_admin_0_countries.zip
+	mkdir -p $(dir $@)
+	unzip -d $(dir $@) $<
+	touch $@
+
+# include only countries in [(40W, 17N), (52E, 82N)] bounding box
+# with 5 degrees padding (2 degrees only for North side)
+shp/euctrl/eurocontrol_area_10m.shp: shp/ne_10m_admin_0_countries.shp
+	rm -rf $(dir $@)
+	mkdir -p $(dir $@)
+	ogr2ogr \
+		-f "ESRI Shapefile" \
+		-clipdst $(CLIP_BBOX) \
+		$@ $<
+
+shp/euctrl/eurocontrol_area_50m.shp: shp/ne_50m_admin_0_countries.shp
+	rm -rf $(dir $@)
+	mkdir -p $(dir $@)
+	ogr2ogr \
+		-f "ESRI Shapefile" \
+		-clipdst $(CLIP_BBOX) \
+		$@ $<
+
+shp/euctrl/eurocontrol_area_110m.shp: shp/ne_110m_admin_0_countries.shp
+	rm -rf $(dir $@)
+	mkdir -p $(dir $@)
+	ogr2ogr \
+		-f "ESRI Shapefile" \
+		-clipdst $(CLIP_BBOX) \
+		$@ $<
+
+topo/euctrl/eurocontrol_area_%.json: shp/euctrl/eurocontrol_area_%.shp
+	mkdir -p $(dir $@)
+	$(TOPOJSON) \
+		--quantization 1e5 \
+		--id-property=+iso_n3 \
+		-- countries=$< \
+		| $(TOPOMERGE) \
+			-o $@ \
+			--io=countries \
+			--oo=land \
+			--no-key
+
+
+
 
 
 ################## helpers ######################
@@ -390,7 +460,9 @@ clean-tmp:
 					topo/rp2/fabs.json topo/rp2/firs.json topo/rp2/states.json \
 					topo/ses/fabs.json topo/ses/firs.json topo/ses/states.json \
 					data/flags-urls data/world-country-flags.tsv \
-					data/country-id-name.csv data/country-ids data/flags-names
+					data/country-id-name.csv data/country-ids data/flags-names \
+					data/world-country-names.tsv \
+					zip/ne_\*.zip $(CSVS)
 
 clean: clean-tmp
 	rm -fR flags/ topo/ shp/

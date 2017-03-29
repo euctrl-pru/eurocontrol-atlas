@@ -16,11 +16,11 @@
         "url": "http://github.com/euctrl-pru/eurocontrol-atlas.git"
     },
     "dependencies": {
-        "topojson": ">=1.6.2 <2",
-        "mapshaper": "0.3.14",
+        "topojson": ">=1.6.27 <2",
+        "mapshaper": "0.3.32 <0.4",
         "dbf2dsv": "0.1.0"
     },
     "devDependencies": {
-        "shapefile": "0.1"
+        "shapefile": "0.5.7"
     }
 }
