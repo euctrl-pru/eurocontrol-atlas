@@ -1,36 +1,36 @@
-id,year,membership,name
-40,1995,m,Austria
-56,1958,m,Belgium
-100,2007,m,Bulgaria
-191,2013,m,Croatia
-196,2004,m,Cyprus
-203,2004,m,Czech Republic
-208,1973,m,Denmark
-233,2004,m,Estonia
-246,1995,m,Finland
-250,1958,m,France
-276,1958,m,Germany
-300,1981,m,Greece
-348,2004,m,Hungary
-372,1973,m,Ireland
-380,1958,m,Italy
-428,2004,m,Latvia
-440,2004,m,Lithuania
-442,1958,m,Luxembourg
-470,2004,m,Malta
-528,1958,m,Netherlands
-616,2004,m,Poland
-620,1986,m,Portugal
-642,2007,m,Romania
-703,2004,m,Slovakia
-705,2004,m,Slovenia
-724,1986,m,Spain
-752,1995,m,Sweden
-826,1973,m,United Kingdom
-8,,c,Albania
-499,,c,Montenegro
-688,,c,Serbia
-807,,c,Macedonia
-792,,c,Turkey
-70,,p,Bosnia and Herzegovina
-900,,p,Kosovo
+id,entry,exit,membership,name
+56,1958-01-01,NA,member,Belgium
+250,1958-01-01,NA,member,France
+276,1958-01-01,NA,member,Germany
+380,1958-01-01,NA,member,Italy
+442,1958-01-01,NA,member,Luxembourg
+528,1958-01-01,NA,member,Netherlands
+208,1973-01-01,NA,member,Denmark
+372,1973-01-01,NA,member,Ireland
+826,1973-01-01,2020-01-31,NA,United Kingdom
+300,1981-01-01,NA,member,Greece
+620,1986-01-01,NA,member,Portugal
+724,1986-01-01,NA,member,Spain
+40,1995-01-01,NA,member,Austria
+246,1995-01-01,NA,member,Finland
+752,1995-01-01,NA,member,Sweden
+196,2004-05-01,NA,member,Cyprus
+203,2004-05-01,NA,member,Czech Republic
+233,2004-05-01,NA,member,Estonia
+348,2004-05-01,NA,member,Hungary
+428,2004-05-01,NA,member,Latvia
+440,2004-05-01,NA,member,Lithuania
+470,2004-05-01,NA,member,Malta
+616,2004-05-01,NA,member,Poland
+703,2004-05-01,NA,member,Slovakia
+705,2004-05-01,NA,member,Slovenia
+100,2007-01-01,NA,member,Bulgaria
+642,2007-01-01,NA,member,Romania
+191,2013-07-01,NA,member,Croatia
+8,NA,NA,candidate,Albania
+70,NA,NA,potential candidate,Bosnia and Herzegovina
+499,NA,NA,candidate,Montenegro
+688,NA,NA,candidate,Serbia
+792,NA,NA,candidate,Turkey
+807,NA,NA,candidate,Macedonia
+900,NA,NA,potential candidate,Kosovo
