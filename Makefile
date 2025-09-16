@@ -29,7 +29,7 @@ make-list = $(call join-with,$(comma),$(patsubst %,'%',$1))
 #   Finland (EF,FI,246), France (LF,FR,250),
 #   Georgia (UG,GE,268), Germany(ED/ET,DE,276), Greece (LG,GR,300),
 #   Hungary (LH,HU,348),
-#   Ireland (EI,IE,372), Israel (LL,IL,,376), Italy (LI,IT,380),
+#   Iceland (BI, IS, 352), Ireland (EI,IE,372), Israel (LL,IL,,376), Italy (LI,IT,380),
 #   Latvia (EV,LV,428), Lithuania (EY,LT,440), Luxembourg (EL,LU,442),
 #   Malta (LM,MT,470), Moldova (LU,MD,498), Monaco (LN,MC,492), Montenegro (LY,ME,499), Morocco (GM,MA,504)
 #   Netherlands (EH,NL,528), Norway (EN,NO,578),
